@@ -1,0 +1,47 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: Q0DeR-MaG1C-BrAnCh-Fo2-NoN-GiT-Or-No-C0MmIt
+exported_at: "2026-06-08T06:58:30Z"
+modules:
+    "":
+        dir_name: FH6 车辆调校 AI 协作平台
+        title: FH6 车辆调校 AI 协作平台
+        scope:
+            - .gitignore
+            - package.json
+            - server\.env.example
+            - server\package.json
+            - server\src\app.ts
+            - server\src\index.ts
+            - server\src\routes\chat.ts
+            - server\src\utils\id.ts
+            - server\tsconfig.json
+            - shared\package.json
+            - shared\types\chat.ts
+            - shared\types\index.ts
+            - shared\types\preference.ts
+            - shared\types\tuning.ts
+            - shared\types\vehicle.ts
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    server:
+        dir_name: FH6 AI 聊天后端服务
+        title: FH6 AI 聊天后端服务
+        scope:
+            - server/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    shared:
+        dir_name: 共享类型定义模块
+        title: 共享类型定义模块
+        scope:
+            - shared/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []

@@ -1,0 +1,22 @@
+schema_version: 1
+module_path: ""
+title: FH6 车辆调校 AI 协作平台
+scope:
+    - .gitignore
+    - package.json
+    - server\.env.example
+    - server\package.json
+    - server\src\app.ts
+    - server\src\index.ts
+    - server\src\routes\chat.ts
+    - server\src\utils\id.ts
+    - server\tsconfig.json
+    - shared\package.json
+    - shared\types\chat.ts
+    - shared\types\index.ts
+    - shared\types\preference.ts
+    - shared\types\tuning.ts
+    - shared\types\vehicle.ts
+source_files: []
+depends_on: []
+related_to: []
