@@ -1,0 +1,61 @@
+{
+  "tires": {
+    "frontPressure": "前轮胎气压",
+    "rearPressure": "后轮胎气压",
+    "frontCamber": "前轮外倾角",
+    "rearCamber": "后轮外倾角",
+    "frontToe": "前束角",
+    "rearToe": "后束角",
+    "caster": "主销后倾角"
+  },
+  "springs": {
+    "frontRate": "前弹簧刚度",
+    "rearRate": "后弹簧刚度",
+    "frontHeight": "前车身高度",
+    "rearHeight": "后车身高度"
+  },
+  "damping": {
+    "frontRebound": "前回弹阻尼",
+    "rearRebound": "后回弹阻尼",
+    "frontBump": "前压缩阻尼",
+    "rearBump": "后压缩阻尼"
+  },
+  "antirollBars": {
+    "front": "前防倾杆",
+    "rear": "后防倾杆"
+  },
+  "aero": {
+    "frontDownforce": "前下压力",
+    "rearDownforce": "后下压力"
+  },
+  "brakes": {
+    "brakeForce": "制动力",
+    "brakeBalance": "制动力分配(前)"
+  },
+  "differential": {
+    "frontAccel": "前差速器加速",
+    "frontDecel": "前差速器减速",
+    "rearAccel": "后差速器加速",
+    "rearDecel": "后差速器减速",
+    "center": "中央差速器"
+  },
+  "gearing": {
+    "finalDrive": "终传比",
+    "gears": "各挡齿比"
+  },
+  "ratings": {
+    "handling": "操控",
+    "acceleration": "加速",
+    "topSpeed": "极速",
+    "braking": "制动",
+    "stability": "稳定"
+  },
+  "usageTypes": {
+    "竞速": "公路竞速",
+    "越野": "越野穿越",
+    "漂移": "漂移竞技",
+    "拉力赛": "拉力赛事",
+    "日常驾驶": "日常巡游",
+    "直线加速": "直线加速赛"
+  }
+}

@@ -1,4 +1,4 @@
-// 任务类型
+// 任务类型（前端唯一需要的 AI 相关类型）
 export type TaskType = 'light' | 'deep';
 
 // 对话消息角色
