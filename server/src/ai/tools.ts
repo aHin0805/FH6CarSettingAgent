@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import { tool } from 'ai';
-import { tuneSetupSchema } from './schemas';
+import { tool, generateText } from 'ai';
+import { createProvider } from './provider';
+import { getDeepModelConfig } from './config';
+import { tuneGenerationPrompt, tuneComparisonPrompt } from './prompts/deep-tasks';
 
 export const tuningTools = {
   generateTune: tool({
@@ -15,14 +17,38 @@ export const tuningTools = {
       drivetrain: z.enum(['FWD', 'RWD', 'AWD']).optional().describe('驱动形式'),
     }),
     execute: async (params) => {
-      // 这个工具的 execute 在后端不会被真正调用
-      // AI 会自行生成结构化输出，前端负责解析和展示
-      // 返回确认信息
-      return {
-        success: true,
-        message: `已为 ${params.vehicleBrand} ${params.vehicleModel} 生成${params.usageType}调校方案`,
-        params,
-      };
+      // ===== 多模型路由：调用深度模型生成调校方案 =====
+      try {
+        const deepConfig = getDeepModelConfig();
+        const deepProvider = createProvider(deepConfig);
+
+        const { text } = await generateText({
+          model: deepProvider,
+          system: tuneGenerationPrompt,
+          prompt: `请为以下车辆生成调校方案：
+车辆：${params.vehicleBrand} ${params.vehicleModel} ${params.vehicleYear || ''}
+用途：${params.usageType}
+驾驶风格：${params.drivingStyle}
+驱动形式：${params.drivetrain || '未指定'}
+当前问题：${params.problems?.join('、') || '无'}`,
+          maxTokens: deepConfig.maxTokens,
+        });
+
+        return {
+          success: true,
+          message: `已为 ${params.vehicleBrand} ${params.vehicleModel} 生成${params.usageType}调校方案`,
+          tuneData: text,
+          params,
+        };
+      } catch (err) {
+        // 深度模型调用失败时 fallback
+        console.error('[FH6] 深度模型调校生成失败:', (err as Error).message);
+        return {
+          success: false,
+          message: `调校方案生成遇到问题，请稍后重试: ${(err as Error).message}`,
+          params,
+        };
+      }
     },
   }),
 
@@ -33,6 +59,7 @@ export const tuningTools = {
       vehicleInfo: z.string().describe('车辆信息描述'),
     }),
     execute: async (params) => {
+      // 轻量操作，不需要深度模型
       return {
         success: true,
         message: `调校方案「${params.tuneName}」已保存`,
@@ -49,11 +76,35 @@ export const tuningTools = {
       focusArea: z.string().optional().describe('重点关注领域'),
     }),
     execute: async (params) => {
-      return {
-        success: true,
-        message: `正在对比方案「${params.tuneA}」和「${params.tuneB}」`,
-        params,
-      };
+      // ===== 多模型路由：调用深度模型进行对比分析 =====
+      try {
+        const deepConfig = getDeepModelConfig();
+        const deepProvider = createProvider(deepConfig);
+
+        const { text } = await generateText({
+          model: deepProvider,
+          system: tuneComparisonPrompt,
+          prompt: `请对比以下两个调校方案：
+方案A：${params.tuneA}
+方案B：${params.tuneB}
+重点关注：${params.focusArea || '全面对比'}`,
+          maxTokens: deepConfig.maxTokens,
+        });
+
+        return {
+          success: true,
+          message: `正在对比方案「${params.tuneA}」和「${params.tuneB}」`,
+          comparisonData: text,
+          params,
+        };
+      } catch (err) {
+        console.error('[FH6] 深度模型对比分析失败:', (err as Error).message);
+        return {
+          success: false,
+          message: `方案对比遇到问题，请稍后重试: ${(err as Error).message}`,
+          params,
+        };
+      }
     },
   }),
 };

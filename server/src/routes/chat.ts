@@ -1,30 +1,37 @@
 import express from 'express';
 import { streamText } from 'ai';
 import { createProvider } from '../ai/provider';
+import { getLightModelConfig, getDeepModelConfig } from '../ai/config';
 import { systemPrompt } from '../ai/prompts/system';
 import { tuningTools } from '../ai/tools';
+
+export type TaskType = 'light' | 'deep';
 
 export const chatRouter = express.Router();
 
 chatRouter.post('/', async (req, res) => {
-  const { messages, sessionId } = req.body;
+  const { messages, sessionId, taskType } = req.body as {
+    messages: { role: string; content: string }[];
+    sessionId?: string;
+    taskType?: TaskType;
+  };
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     res.json({ code: 400, data: null, message: 'messages 不能为空' });
     return;
   }
 
-  const apiKey = process.env.AI_API_KEY;
-  const baseURL = process.env.AI_BASE_URL || 'https://api.deepseek.com/v1';
-  const model = process.env.AI_MODEL || 'deepseek-chat';
+  // 多模型路由：根据 taskType 选择主模型
+  const resolvedTaskType: TaskType = taskType || 'light';
+  const config = resolvedTaskType === 'deep' ? getDeepModelConfig() : getLightModelConfig();
 
-  if (!apiKey) {
+  if (!config.apiKey) {
     res.json({ code: 401, data: null, message: 'AI API Key 未配置，请在 .env 文件中设置 AI_API_KEY' });
     return;
   }
 
   try {
-    const provider = createProvider({ baseURL, apiKey, model });
+    const provider = createProvider(config);
 
     const result = streamText({
       model: provider,

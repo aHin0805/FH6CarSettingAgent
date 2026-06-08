@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { chatRouter } from './routes/chat';
+import { getLightModelConfig, getDeepModelConfig } from './ai/config';
 
 export const app = express();
 
@@ -13,13 +14,44 @@ app.use(express.json());
 
 // 健康检查
 app.get('/api/health', (_req, res) => {
+  const light = getLightModelConfig();
+  const deep = getDeepModelConfig();
   res.json({
     code: 0,
     data: {
       status: 'ok',
-      aiModel: process.env.AI_MODEL || 'deepseek-chat',
-      aiBaseURL: process.env.AI_BASE_URL || 'https://api.deepseek.com/v1',
-      hasApiKey: !!(process.env.AI_API_KEY),
+      lightModel: light.model,
+      deepModel: deep.model,
+      hasApiKey: !!light.apiKey,
+      hasDeepApiKey: !!deep.apiKey,
+    },
+    message: 'success',
+  });
+});
+
+// 获取可用模型列表（前端用于展示模型选择器）
+app.get('/api/models', (_req, res) => {
+  const light = getLightModelConfig();
+  const deep = getDeepModelConfig();
+  res.json({
+    code: 0,
+    data: {
+      models: [
+        {
+          id: 'light',
+          name: light.model,
+          label: '⚡ 日常对话',
+          description: '轻量模型，响应快，适合日常问答',
+          available: !!light.apiKey,
+        },
+        {
+          id: 'deep',
+          name: deep.model,
+          label: '🧠 深度分析',
+          description: '深度模型，推理强，适合调校方案生成和复杂分析',
+          available: !!deep.apiKey,
+        },
+      ],
     },
     message: 'success',
   });
